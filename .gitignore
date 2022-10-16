@@ -37,6 +37,10 @@ local.properties
 /**/npm-debug.log
 /**/yarn-error.log
 
+# env
+#
+/**/.env
+
 # BUCK
 buck-out/
 \.buckd/
