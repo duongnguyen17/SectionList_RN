@@ -8,6 +8,9 @@ const AuthorSchema = new Schema({
   age: {
     type: Number,
   },
+  books: {
+    type: [Schema.Types.ObjectId],
+  },
 });
 
 export default model("author", AuthorSchema);

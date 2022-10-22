@@ -31,15 +31,13 @@ const resolver = {
         }),
     },
     Book: {
-        author: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
-            const allAuthors = yield Author_1.default.find();
-            return allAuthors.find((author) => author.id == parent.authorId);
+        authors: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
+            return Promise.all(parent.authors.map((authorId) => __awaiter(void 0, void 0, void 0, function* () { return yield Author_1.default.findById(authorId); })));
         }),
     },
     Author: {
         books: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
-            const allBooks = yield Book_1.default.find();
-            return allBooks.filter((book) => book.authorId == parent.id);
+            return Promise.all(parent.books.map((bookId) => __awaiter(void 0, void 0, void 0, function* () { return yield Book_1.default.findById(bookId); })));
         }),
     },
     // Mutation
@@ -71,13 +69,87 @@ const resolver = {
                     return Error("Sách này đã có trong hệ thống");
                 }
                 //kiểm tra tác giả có trong hệ thống khoong
-                const author = yield Author_1.default.findById(args.input.authorId);
-                if (!author) {
-                    return Error("Tác giả này không có trong hệ thống");
+                if (!!args.input.authorIds) {
+                    yield Promise.all(args.input.authorIds.map((authorId) => __awaiter(void 0, void 0, void 0, function* () {
+                        const author = yield Author_1.default.findById(authorId);
+                        if (!author) {
+                            // throw Error(`Không có tác giả ${authorId} trong hệ thống`);
+                            return Error(`Không có tác giả ${authorId} trong hệ thống`);
+                        }
+                    })));
                 }
                 const newBook = new Book_1.default(args.input);
                 yield newBook.save();
+                // thêm sách vào cho các tác giả
+                if (!!args.input.authorIds.length) {
+                    yield Promise.all(args.input.authorIds.map((authorId) => __awaiter(void 0, void 0, void 0, function* () {
+                        const author = yield Author_1.default.findById(authorId);
+                        author === null || author === void 0 ? void 0 : author.books.push(newBook.id);
+                        yield (author === null || author === void 0 ? void 0 : author.save());
+                    })));
+                }
                 return { id: newBook._id.toString() };
+            }
+            catch (error) {
+                return Error(error.message);
+            }
+        }),
+        addAuthorsForBook: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const book = yield Book_1.default.findById(args.input.bookId);
+                if (!book) {
+                    // throw Error("Làm gì có sách này");
+                    return Error("Làm gì có sách này");
+                }
+                yield Promise.all(args.input.authorIds.map((authorId) => __awaiter(void 0, void 0, void 0, function* () {
+                    const author = yield Author_1.default.findById(authorId);
+                    if (!author) {
+                        // throw Error(`Làm gì có tác giả ${authorId}`);
+                        return Error(`Làm gì có tác giả ${authorId}`);
+                    }
+                    else {
+                        if (book.authors.includes(authorId)) {
+                            // throw Error(`Tác giả ${authorId} đã được thêm`);
+                            return Error(`Tác giả ${authorId} đã được thêm`);
+                        }
+                        else {
+                            book.authors.push(authorId);
+                            author.books.push(book.id);
+                            yield book.save();
+                            yield author.save();
+                        }
+                    }
+                })));
+                return book;
+            }
+            catch (error) {
+                return Error(error.message);
+            }
+        }),
+        addBooksForAuthor: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const author = yield Author_1.default.findById(args.input.authorId);
+                if (!author) {
+                    throw Error("Làm gì có tác giả này");
+                }
+                yield Promise.all(args.input.bookIds.map((bookId) => __awaiter(void 0, void 0, void 0, function* () {
+                    const book = yield Book_1.default.findById(bookId);
+                    if (!book) {
+                        throw Error(`Làm gì có sách ${bookId}`);
+                    }
+                    else {
+                        if (author.books.includes(bookId)) {
+                            throw Error(`Sách ${bookId} đã được thêm`);
+                        }
+                        else {
+                            author.books.push(bookId);
+                            book.authors.push(author.id);
+                            yield book.save();
+                        }
+                    }
+                })));
+                yield author.save();
+                return author;
             }
             catch (error) {
                 return Error(error.message);

@@ -9,5 +9,8 @@ const AuthorSchema = new Schema({
     age: {
         type: Number,
     },
+    books: {
+        type: [Schema.Types.ObjectId],
+    },
 });
 exports.default = (0, mongoose_1.model)("author", AuthorSchema);

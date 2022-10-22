@@ -1,32 +1,42 @@
-export type Book = {
+export type BookType = {
   id: String;
   name: String;
   genre: String;
-  author: Author;
+  authors: Array<AuthorType>;
 };
 
-export type Author = {
+export type AuthorType = {
   id: String;
   name: String;
   age: number;
-  books: Array<Book>;
+  books: Array<BookType>;
 };
 
-export type CreateBookRes = Pick<Book, "id">;
+export type CreateBookRes = Pick<BookType, "id">;
 
-export type CreateAuthorRes = Pick<Author, "id">;
+export type CreateAuthorRes = Pick<AuthorType, "id">;
 
-export type BookInput = Pick<Book, "id">;
+export type BookInput = Pick<BookType, "id">;
 
-export type AuthorInput = Pick<Author, "id">;
+export type AuthorInput = Pick<AuthorType, "id">;
 
 export type CreateBookInput = {
   name: String;
   genre: String;
-  authorId: String!;
+  authorIds: Array<String!>;
 };
 
 export type CreateAuthorInput = {
   name: String;
   age: Int;
+};
+
+export type AddAuthorsForBook = {
+  bookId: String!;
+  authorIds: Array<String!>;
+};
+
+export type AddBooksForAuthor = {
+  bookIds: Array<String>;
+  authorId: String!;
 };

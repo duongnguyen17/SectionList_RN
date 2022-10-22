@@ -9,8 +9,8 @@ const BookSchema = new Schema({
     genre: {
         type: String,
     },
-    authorId: {
-        type: Schema.Types.ObjectId,
+    authors: {
+        type: [Schema.Types.ObjectId],
     },
 });
 exports.default = (0, mongoose_1.model)("book", BookSchema);

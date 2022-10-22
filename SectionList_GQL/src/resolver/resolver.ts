@@ -1,8 +1,12 @@
 import {
+  AddAuthorsForBook,
+  AddBooksForAuthor,
+  AuthorType,
   AuthorInput,
   BookInput,
   CreateAuthorInput,
   CreateBookInput,
+  BookType,
 } from "./../type.d";
 import Author from "../models/Author";
 import Book from "../models/Book";
@@ -23,16 +27,16 @@ const resolver = {
     },
   },
   Book: {
-    author: async (parent: any, args: any) => {
-      const allAuthors = await Author.find();
-      return allAuthors.find((author) => author.id == parent.authorId);
-    },
+    authors: async (parent: BookType, args: any) =>
+      Promise.all(
+        parent.authors.map(async (authorId) => await Author.findById(authorId))
+      ),
   },
   Author: {
-    books: async (parent: any, args: any) => {
-      const allBooks = await Book.find();
-      return allBooks.filter((book) => book.authorId == parent.id);
-    },
+    books: async (parent: AuthorType, args: any) =>
+      Promise.all(
+        parent.books.map(async (bookId) => await Book.findById(bookId))
+      ),
   },
 
   // Mutation
@@ -67,14 +71,102 @@ const resolver = {
           return Error("Sách này đã có trong hệ thống");
         }
         //kiểm tra tác giả có trong hệ thống khoong
-        const author = await Author.findById(args.input.authorId);
-
-        if (!author) {
-          return Error("Tác giả này không có trong hệ thống");
+        if (!!args.input.authorIds) {
+          await Promise.all(
+            args.input.authorIds.map(async (authorId) => {
+              const author = await Author.findById(authorId);
+              if (!author) {
+                // throw Error(`Không có tác giả ${authorId} trong hệ thống`);
+                return Error(`Không có tác giả ${authorId} trong hệ thống`);
+              }
+            })
+          );
         }
         const newBook = new Book(args.input);
         await newBook.save();
+        // thêm sách vào cho các tác giả
+        if (!!args.input.authorIds.length) {
+          await Promise.all(
+            args.input.authorIds.map(async (authorId) => {
+              const author = await Author.findById(authorId);
+              author?.books.push(newBook.id);
+              await author?.save();
+            })
+          );
+        }
+
         return { id: newBook._id.toString() };
+      } catch (error: any) {
+        return Error(error.message);
+      }
+    },
+    addAuthorsForBook: async (
+      parent: any,
+      args: {
+        input: AddAuthorsForBook;
+      }
+    ) => {
+      try {
+        const book = await Book.findById(args.input.bookId);
+        if (!book) {
+          // throw Error("Làm gì có sách này");
+          return Error("Làm gì có sách này");
+        }
+        await Promise.all(
+          args.input.authorIds.map(async (authorId) => {
+            const author = await Author.findById(authorId);
+            if (!author) {
+              // throw Error(`Làm gì có tác giả ${authorId}`);
+              return Error(`Làm gì có tác giả ${authorId}`);
+            } else {
+              if (book.authors.includes(authorId)) {
+                // throw Error(`Tác giả ${authorId} đã được thêm`);
+                return Error(`Tác giả ${authorId} đã được thêm`);
+              } else {
+                book.authors.push(authorId);
+                author.books.push(book.id);
+                await book.save();
+                await author.save();
+              }
+            }
+          })
+        );
+
+        return book;
+      } catch (error: any) {
+        return Error(error.message);
+      }
+    },
+
+    addBooksForAuthor: async (
+      parent: any,
+      args: {
+        input: AddBooksForAuthor;
+      }
+    ) => {
+      try {
+        const author = await Author.findById(args.input.authorId);
+        if (!author) {
+          throw Error("Làm gì có tác giả này");
+        }
+        await Promise.all(
+          args.input.bookIds.map(async (bookId) => {
+            const book = await Book.findById(bookId);
+            if (!book) {
+              throw Error(`Làm gì có sách ${bookId}`);
+            } else {
+              if (author.books.includes(bookId)) {
+                throw Error(`Sách ${bookId} đã được thêm`);
+              } else {
+                author.books.push(bookId);
+                book.authors.push(author.id);
+                await book.save();
+              }
+            }
+          })
+        );
+        await author.save();
+        return author;
       } catch (error: any) {
         return Error(error.message);
       }

@@ -5,7 +5,7 @@ const typeDefs = gql`
     id: ID
     name: String
     genre: String
-    author: Author
+    authors: [Author]
   }
 
   type Author {
@@ -18,7 +18,7 @@ const typeDefs = gql`
   type CreateBookRes {
     id: ID
   }
-  
+
   type CreateAuthorRes {
     id: ID
   }
@@ -34,12 +34,22 @@ const typeDefs = gql`
   input CreateBookInput {
     name: String
     genre: String
-    authorId: ID!
+    authorIds: [ID!]
   }
 
   input CreateAuthorInput {
     name: String
     age: Int
+  }
+
+  input AddAuthorsForBookInput {
+    bookId: ID!
+    authorIds: [ID!]
+  }
+
+  input AddBooksForAuthorInput {
+    bookIds: [ID!]
+    authorId: ID!
   }
 
   # ROOT TYPE
@@ -53,6 +63,8 @@ const typeDefs = gql`
   type Mutation {
     createAuthor(input: CreateAuthorInput): CreateAuthorRes
     createBook(input: CreateBookInput): CreateBookRes
+    addAuthorsForBook(input: AddAuthorsForBookInput): Book
+    addBooksForAuthor(input: AddBooksForAuthorInput): Author
   }
 `;
 
