@@ -1,5 +1,9 @@
 apply plugin: "com.android.application"
 
+project.ext.envConfigFiles = [
+    dev: ".env.dev",
+]
+
 import com.android.build.OutputFile
 
 /**
@@ -82,7 +86,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -137,9 +141,12 @@ android {
         applicationId "com.sectionlist"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        // versionCode Integer.valueOf(env.get("ANDROID_APP_VERSION_CODE"))
+        // versionName env.get("ANDROID_APP_VERSION_NAME")
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+        resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
 
         if (isNewArchitectureEnabled()) {
             // We configure the NDK build only if you decide to opt-in for the New Architecture.
@@ -157,7 +164,7 @@ android {
                     cppFlags "-std=c++17"
                     // Make sure this target name is the same you specify inside the
                     // src/main/jni/Android.mk file for the `LOCAL_MODULE` variable.
-                    targets "sectionlist_appmodules"
+                    targets "tinwinshop_appmodules"
                 }
             }
             if (!enableSeparateBuildPerCPUArchitecture) {
@@ -224,6 +231,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
     }
     buildTypes {
         debug {
@@ -232,12 +245,26 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
-
+    flavorDimensions "enviroment"
+    productFlavors {
+        dev {
+            dimension "enviroment"
+            resValue "string", "CodePushDeploymentKey", '"GeGF8QalOaDbj54d3p6y3qL3GyEOfq_-RoqCR"'
+        }
+        staging {
+            dimension "enviroment"
+            resValue "string", "CodePushDeploymentKey", '"HZiwMn46jArAjLCVpDAURSTbroGmSHCQ7oG4o"'
+        }
+        prod {
+            dimension "enviroment"
+            resValue "string", "CodePushDeploymentKey", '"VINwTcYlf9OrSmvPIvJSZ3Z4dwh5De1b_aTqI"'
+        }
+    }
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->

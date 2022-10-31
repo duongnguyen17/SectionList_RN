@@ -39,6 +39,7 @@ local.properties
 
 # env
 #
+/**/.env.*
 /**/.env
 
 # BUCK

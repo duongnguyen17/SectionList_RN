@@ -52,6 +52,16 @@ const typeDefs = gql`
     authorId: ID!
   }
 
+  input RemoveAuthorsForBookInput {
+    bookId: ID!
+    authorIds: [ID!]
+  }
+
+  input RemoveBooksForAuthorInput {
+    bookIds: [ID!]
+    authorId: ID!
+  }
+
   # ROOT TYPE
   type Query {
     books: [Book]
@@ -65,6 +75,8 @@ const typeDefs = gql`
     createBook(input: CreateBookInput): CreateBookRes
     addAuthorsForBook(input: AddAuthorsForBookInput): Book
     addBooksForAuthor(input: AddBooksForAuthorInput): Author
+    removeAuthorsForBook(input: RemoveAuthorsForBookInput): Book
+    removeBooksForAuthor(input: RemoveBooksForAuthorInput): Author
   }
 `;
 

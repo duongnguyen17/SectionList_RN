@@ -5,6 +5,14 @@
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
     /* Completeness */
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
-  }
+    // "skipLibCheck": true,           /* Skip type checking all .d.ts files. */
+    // Path alias config
+    "baseUrl": ".",
+    "paths": {
+      // This needs to be mirrored in babel.config.js
+      // Components is a directory with sub directories
+      "@/*": ["./src/*"],
+    },
+  },
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
 }

@@ -40,3 +40,13 @@ export type AddBooksForAuthor = {
   bookIds: Array<String>;
   authorId: String!;
 };
+
+export type RemoveAuthorsForBook = {
+  bookId: String!;
+  authorIds: Array<String!>;
+};
+
+export type RemoveBooksForAuthor = {
+  bookIds: Array<String>;
+  authorId: String!;
+};

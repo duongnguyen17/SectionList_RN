@@ -7,9 +7,12 @@ import {
   CreateAuthorInput,
   CreateBookInput,
   BookType,
+  RemoveAuthorsForBook,
+  RemoveBooksForAuthor,
 } from "./../type.d";
 import Author from "../models/Author";
 import Book from "../models/Book";
+
 const resolver = {
   //Query
   Query: {
@@ -166,6 +169,98 @@ const resolver = {
           })
         );
         await author.save();
+        return author;
+      } catch (error: any) {
+        return Error(error.message);
+      }
+    },
+    removeAuthorsForBook: async (
+      parent: any,
+      args: {
+        input: RemoveAuthorsForBook;
+      }
+    ) => {
+      try {
+        const book = await Book.findById(args.input.bookId);
+        if (!book) {
+          // throw Error("Làm gì có sách này");
+          return Error("Làm gì có sách này");
+        }
+        await Promise.all(
+          args.input.authorIds.map(async (authorId) => {
+            const author = await Author.findById(authorId);
+            if (!author) {
+              // throw Error(`Làm gì có tác giả ${authorId}`);
+              return Error(`Làm gì có tác giả ${authorId}`);
+            } else {
+              if (book.authors.includes(authorId)) {
+                // remove authorId from book.authors
+                const iAuthor = book.authors.indexOf(authorId);
+                if (iAuthor > -1) {
+                  book.authors.splice(iAuthor, 1);
+                }
+                // remove bookId from author.books
+                const iBook = author.books.indexOf(book.id);
+                if (iBook > -1) {
+                  author.books.splice(iBook, 1);
+                }
+
+                await author.save();
+              } else {
+                // throw Error(`Tác giả ${authorId} không phải là tác giả của cuốn sách này`);
+                return Error(
+                  `Tác giả ${authorId} không phải là tác giả của cuốn sách này`
+                );
+              }
+            }
+          })
+        );
+        await book.save();
+        return book;
+      } catch (error: any) {
+        return Error(error.message);
+      }
+    },
+
+    removeBooksForAuthor: async (
+      parent: any,
+      args: {
+        input: RemoveBooksForAuthor;
+      }
+    ) => {
+      try {
+        const author = await Author.findById(args.input.authorId);
+        if (!author) {
+          throw Error("Làm gì có tác giả này");
+        }
+        await Promise.all(
+          args.input.bookIds.map(async (bookId) => {
+            const book = await Book.findById(bookId);
+            if (!book) {
+              // throw Error(`Làm gì có sách ${bookId}`);
+              return Error(`Làm gì có sách ${bookId}`);
+            } else {
+              if (author.books.includes(bookId)) {
+                // remove book from author.books
+                const iBook = author.books.indexOf(bookId);
+                if (iBook > -1) {
+                  book.authors.splice(iBook, 1);
+                }
+                // remove author from book
+                const iAuthor = book.authors.indexOf(author.id);
+                if (iAuthor > -1) {
+                  book.authors.splice(iAuthor, 1);
+                }
+
+                await book.save();
+                await author.save();
+              } else {
+                // throw Error(`Cuốn ${bookId} không phải là của tác giả này`);
+                return Error(`Cuốn ${bookId} không phải là của tác giả này`);
+              }
+            }
+          })
+        );
         return author;
       } catch (error: any) {
         return Error(error.message);

@@ -155,6 +155,85 @@ const resolver = {
                 return Error(error.message);
             }
         }),
+        removeAuthorsForBook: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const book = yield Book_1.default.findById(args.input.bookId);
+                if (!book) {
+                    // throw Error("Làm gì có sách này");
+                    return Error("Làm gì có sách này");
+                }
+                yield Promise.all(args.input.authorIds.map((authorId) => __awaiter(void 0, void 0, void 0, function* () {
+                    const author = yield Author_1.default.findById(authorId);
+                    if (!author) {
+                        // throw Error(`Làm gì có tác giả ${authorId}`);
+                        return Error(`Làm gì có tác giả ${authorId}`);
+                    }
+                    else {
+                        if (book.authors.includes(authorId)) {
+                            // remove authorId from book.authors
+                            const iAuthor = book.authors.indexOf(authorId);
+                            if (iAuthor > -1) {
+                                book.authors.splice(iAuthor, 1);
+                            }
+                            // remove bookId from author.books
+                            const iBook = author.books.indexOf(book.id);
+                            if (iBook > -1) {
+                                author.books.splice(iBook, 1);
+                            }
+                            yield author.save();
+                        }
+                        else {
+                            // throw Error(`Tác giả ${authorId} không phải là tác giả của cuốn sách này`);
+                            return Error(`Tác giả ${authorId} không phải là tác giả của cuốn sách này`);
+                        }
+                    }
+                })));
+                yield book.save();
+                return book;
+            }
+            catch (error) {
+                return Error(error.message);
+            }
+        }),
+        removeBooksForAuthor: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const author = yield Author_1.default.findById(args.input.authorId);
+                if (!author) {
+                    throw Error("Làm gì có tác giả này");
+                }
+                yield Promise.all(args.input.bookIds.map((bookId) => __awaiter(void 0, void 0, void 0, function* () {
+                    const book = yield Book_1.default.findById(bookId);
+                    if (!book) {
+                        // throw Error(`Làm gì có sách ${bookId}`);
+                        return Error(`Làm gì có sách ${bookId}`);
+                    }
+                    else {
+                        if (author.books.includes(bookId)) {
+                            // remove book from author.books
+                            const iBook = author.books.indexOf(bookId);
+                            if (iBook > -1) {
+                                book.authors.splice(iBook, 1);
+                            }
+                            // remove author from book
+                            const iAuthor = book.authors.indexOf(author.id);
+                            if (iAuthor > -1) {
+                                book.authors.splice(iAuthor, 1);
+                            }
+                            yield book.save();
+                            yield author.save();
+                        }
+                        else {
+                            // throw Error(`Cuốn ${bookId} không phải là của tác giả này`);
+                            return Error(`Cuốn ${bookId} không phải là của tác giả này`);
+                        }
+                    }
+                })));
+                return author;
+            }
+            catch (error) {
+                return Error(error.message);
+            }
+        }),
     },
 };
 exports.default = resolver;

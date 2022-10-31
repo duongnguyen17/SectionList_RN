@@ -53,6 +53,16 @@ const typeDefs = (0, apollo_server_express_1.gql) `
     authorId: ID!
   }
 
+  input RemoveAuthorsForBookInput {
+    bookId: ID!
+    authorIds: [ID!]
+  }
+
+  input RemoveBooksForAuthorInput {
+    bookIds: [ID!]
+    authorId: ID!
+  }
+
   # ROOT TYPE
   type Query {
     books: [Book]
@@ -66,6 +76,8 @@ const typeDefs = (0, apollo_server_express_1.gql) `
     createBook(input: CreateBookInput): CreateBookRes
     addAuthorsForBook(input: AddAuthorsForBookInput): Book
     addBooksForAuthor(input: AddBooksForAuthorInput): Author
+    removeAuthorsForBook(input: RemoveAuthorsForBookInput): Book
+    removeBooksForAuthor(input: RemoveBooksForAuthorInput): Author
   }
 `;
 exports.default = typeDefs;
