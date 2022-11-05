@@ -4,17 +4,21 @@ import { useEffect, useRef } from 'react';
 import { useHookState } from '.';
 
 export const useStarting = () => {
+  // const appState = useState(appStateGlobal);
   const appState = useHookState(appStateGlobal);
-  const timeoutID = useRef<number | undefined>();
+  const timeoutRef = useRef<number | undefined>();
+
   useEffect(() => {
-    timeoutID.current = setTimeout(() => {
-      appState.merge({
-        isStarting: false,
-      });
-    }, SPLASH_TIME);
+    if (appState.isStarting) {
+      timeoutRef.current = setTimeout(() => {
+        appState.merge({
+          isStarting: false,
+        });
+      }, SPLASH_TIME);
+    }
     return () => {
-      if (timeoutID.current) {
-        clearTimeout(timeoutID.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
     };
   }, [appState]);

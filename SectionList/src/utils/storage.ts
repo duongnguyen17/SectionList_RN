@@ -30,9 +30,7 @@ export const saveMultiValues = async (values: Array<any>) => {
   }
 };
 
-export const getValue = async (
-  key: StorageKey,
-): Promise<string | undefined> => {
+export const getValue = async (key: StorageKey): Promise<string | undefined> => {
   try {
     const value = await AsyncStorage.getItem(key);
     return value ? JSON.parse(value) : undefined;
@@ -52,8 +50,8 @@ export const getMultiValues = async (keys: Array<StorageKey>) => {
   }
 
   let value: Array<any> = [];
-  values.forEach((v, i) => {
-    value[parseInt(v[0])] = v[1] ? JSON.parse(v[1]) : undefined;
+  values.forEach((v) => {
+    value[parseInt(v[0], 10)] = v[1] ? JSON.parse(v[1]) : undefined;
   });
 
   return value;

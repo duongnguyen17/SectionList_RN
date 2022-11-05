@@ -7,12 +7,13 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 const LoadingFullScreen = () => {
   const appState = useHookState(appStateGlobal);
 
-  if (appState.isLoading.value)
+  if (appState.isLoading.value) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#ff9900" />
       </View>
     );
+  }
   return null;
 };
 

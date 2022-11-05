@@ -20,6 +20,7 @@ export const useCompareLanguage = (locale: LocaleType) => {
         return LOCALES.ENGLISH;
     }
   }, [locale]);
+
   const checkNextLanguage = useCallback((loc: LocaleType) => {
     switch (loc.id) {
       case LOCALES.ENGLISH.id:

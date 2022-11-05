@@ -1,33 +1,33 @@
-fragment UserModel on User {
-  _id
-  email
-  initialProvider
-  fullName
-  roles
-  isBanned
-  commissionAmountLimit
-  receivedCommissionAmount
-  largestCommissionPackageName
-  largestCommissionPackageBuyDate
-  birthday
-  phoneNumber
-  hasPassword
-  isSeedingSalesUser
-  isPrivateSalesUser
-  wallet {
-    walletBalances {
-      available
-      tokenInfo {
-        name
-      }
-    }
-    walletAddress {
-      blockchain
-      address
-    }
-  }
-  refUser {
-    _id
-    fullName
-  }
-}
+# fragment UserModel on User {
+#   _id
+#   email
+#   initialProvider
+#   fullName
+#   roles
+#   isBanned
+#   commissionAmountLimit
+#   receivedCommissionAmount
+#   largestCommissionPackageName
+#   largestCommissionPackageBuyDate
+#   birthday
+#   phoneNumber
+#   hasPassword
+#   isSeedingSalesUser
+#   isPrivateSalesUser
+#   wallet {
+#     walletBalances {
+#       available
+#       tokenInfo {
+#         name
+#       }
+#     }
+#     walletAddress {
+#       blockchain
+#       address
+#     }
+#   }
+#   refUser {
+#     _id
+#     fullName
+#   }
+# }

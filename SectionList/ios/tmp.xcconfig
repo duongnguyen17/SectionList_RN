@@ -1,0 +1,4 @@
+ANDROID_APP_VERSION_CODE=1
+ANDROID_APP_VERSION_NAME=1.0.0
+TEST=ENV_TEST_DEV
+API_END_POINT=https:/$()/api.pyroc.comartek.com/graphql

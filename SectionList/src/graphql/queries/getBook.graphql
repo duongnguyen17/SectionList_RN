@@ -1,0 +1,11 @@
+query getBook($input: BookInput) {
+  book(input: $input) {
+    id
+    name
+    genre
+    authors {
+      name
+      age
+    }
+  }
+}

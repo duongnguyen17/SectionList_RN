@@ -3,4 +3,3 @@ export * from './useStarting';
 export { default as useTranslation } from './useTranslation';
 export * from './useTranslation';
 export * from './useStorage';
-export { default as useLogin } from './useLogin';

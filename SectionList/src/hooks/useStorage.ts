@@ -2,7 +2,10 @@ import { StorageKey } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect, useCallback } from 'react';
 
-export const useStorage = <T>(key: StorageKey, defaultValue: T): [T, (newValue: T) => Promise<void>] => {
+export const useStorage = <T>(
+  key: StorageKey,
+  defaultValue: T,
+): [T, (newValue: T) => Promise<void>] => {
   const [storageValue, updateStorageValue] = useState(defaultValue);
 
   const getStorageValue = useCallback(async () => {

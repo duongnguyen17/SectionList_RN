@@ -16,7 +16,9 @@ const RootNavigation = () => {
   }
 
   return (
-    <NavigationContainer ref={navigationRef} theme={colorTheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <NavigationContainer
+      ref={navigationRef}
+      theme={colorTheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar barStyle="dark-content" />
       {appState.isLoggedIn.value ? <MainNavigator /> : <AuthNavigator />}
     </NavigationContainer>

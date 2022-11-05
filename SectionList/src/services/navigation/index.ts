@@ -3,7 +3,9 @@ import { CommonActions, NavigationContainerRef, StackActions } from '@react-navi
 import React from 'react';
 
 export const navigationRef =
-  React.createRef<NavigationContainerRef<AuthStackParamList & MainStackParamList & BottomTabParamList>>();
+  React.createRef<
+    NavigationContainerRef<AuthStackParamList & MainStackParamList & BottomTabParamList>
+  >();
 
 /**
  * Call this function when you want to navigate to a specific route.

@@ -6,7 +6,7 @@ import { LocaleContextProvider } from './src/i18n/localeContext';
 import RootNavigation from './src/navigation';
 import { NetInfoProvider } from './src/services';
 import { InstantQueryClient } from './src/services/query_client';
-// import codePush from 'react-native-code-push';
+import codePush from 'react-native-code-push';
 
 const App = () => {
   return (
@@ -24,8 +24,8 @@ const App = () => {
     </QueryClientProvider>
   );
 };
-export default App;
-// export default codePush({
-//   updateDialog: false,
-//   installMode: codePush.InstallMode.IMMEDIATE,
-// })(App);
+
+export default codePush({
+  updateDialog: false,
+  installMode: codePush.InstallMode.IMMEDIATE,
+})(App);

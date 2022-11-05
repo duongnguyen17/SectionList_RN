@@ -1,0 +1,11 @@
+query getBooks {
+  books {
+    id
+    name
+    genre
+    authors {
+      name
+      age
+    }
+  }
+}

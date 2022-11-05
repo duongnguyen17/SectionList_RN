@@ -1,10 +1,10 @@
 import { NavigationService } from '@/services';
 import React from 'react';
-import { Button, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 export const OtherScreen = () => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={styles.container}>
       <Text>OtherScreen</Text>
       <Button
         title="goto OTHER_SCREEN_2"
@@ -15,3 +15,7 @@ export const OtherScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+});

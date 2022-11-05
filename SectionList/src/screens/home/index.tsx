@@ -1,26 +1,18 @@
 import { LOCALES } from '@/common';
-import { useCompareLanguage, useHookState, useLogin, useTranslation } from '@/hooks';
+import { useCompareLanguage, useHookState, useTranslation } from '@/hooks';
 import { appStateGlobal } from '@/state';
 import { LocaleType } from '@/types';
 import { env } from '@/utils';
 import React, { useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 export const HomeScreen = () => {
   const appSate = useHookState(appStateGlobal);
   const { t, changeLocale, localeProvider } = useTranslation();
   const { checkNextLanguage } = useCompareLanguage(localeProvider);
   const [currLocale, setCurrLocale] = useState<LocaleType>(localeProvider);
-  const { mutate: onLogin } = useLogin();
-  const testLogin = () => {
-    onLogin({
-      email: 'duong.nv@comartek.com',
-      password: 'pyroc1803',
-      appVersion: '',
-      deviceId: '',
-      deviceToken: '',
-    });
-  };
+
+  const testLogin = () => {};
 
   const logout = async () => {
     appSate.merge({
@@ -35,12 +27,16 @@ export const HomeScreen = () => {
   };
 
   const changeLanguage = () => {
-    changeLocale(checkNextLanguage(currLocale.id == LOCALES.ENGLISH.id ? LOCALES.VIETNAMESE : LOCALES.ENGLISH));
-    setCurrLocale((pre) => (pre.id == LOCALES.ENGLISH.id ? LOCALES.VIETNAMESE : LOCALES.ENGLISH));
+    changeLocale(
+      checkNextLanguage(
+        currLocale.id === LOCALES.ENGLISH.id ? LOCALES.VIETNAMESE : LOCALES.ENGLISH,
+      ),
+    );
+    setCurrLocale((pre) => (pre.id === LOCALES.ENGLISH.id ? LOCALES.VIETNAMESE : LOCALES.ENGLISH));
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={styles.container}>
       <Text>{t('home')}</Text>
       <Text>Test codepush</Text>
       <Text>{env.test}</Text>
@@ -50,3 +46,7 @@ export const HomeScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+});
